@@ -1,4 +1,4 @@
-"""Top level module cli for semaphore-rest-api-client package."""
+"""Top level module cli for technitium_rac package."""
 
 import sys
 import types
@@ -12,20 +12,25 @@ from api_client.request import RestRequest
 from loguru import logger
 
 from technitium_rac.configurator import app_config
+from technitium_rac.foos import reconcile_servers
 
 CONTEXT_SETTINGS = types.MappingProxyType({"help_option_names": ["-h", "--help"]})
-USER_AGENT = "Technitium Rest API Client"
+DEFAULT_MINUTES = 15
 
 
 @click.command()
 @click.option("--enable/--no-enable", default=False, help="Enable/disable blocking.")
 @click.option(
-    "-m", "--minutes", "--min", type=int, default=15, help="Specify minutes to disable."
+    "-m",
+    "--minutes",
+    "--min",
+    type=int,
+    default=DEFAULT_MINUTES,
+    help="Specify minutes to disable.",
 )
-def blocking(enable: bool, minutes: int) -> NoReturn:
+def blocking(enable: bool, minutes: int) -> NoReturn:  # noqa: WPS210
     """Enable/disable blocking on the technitium server."""
-
-    for server in {"pri"}:
+    for server in app_config.server_keys():
         root, token = app_config.server_info(server)
         q_params = ["token"]
         if enable:
@@ -63,14 +68,22 @@ def blocking(enable: bool, minutes: int) -> NoReturn:
 
 @click.group(context_settings=CONTEXT_SETTINGS)
 @click.option("-d", "--debug", count=True, default=0, help="Bump debug level.")
+@click.option(
+    "-s",
+    "--servers",
+    multiple=True,
+    required=False,
+    help="Specify server(s).",
+)
 @click.option("-v", "--verbose", count=True, default=0, help="Bump verbose level.")
 @click.version_option(VERSION)
-def main(debug: int, verbose: int) -> int:
+def main(debug: int, servers: tuple[str, ...], verbose: int) -> int:
     """Provide api access to a semaphore server."""
     app_config.options["debug"] = debug
+    app_config.options["servers"] = reconcile_servers(servers)
     app_config.options["verbose"] = verbose
     if debug:
-        pprint(app_config.model_dump_json())
+        pprint(app_config.model_dump_json())  # noqa: WPS421
     return 0
 
 
