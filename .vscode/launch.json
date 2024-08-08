@@ -5,12 +5,21 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "Current File",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${file}",
+            "console": "integratedTerminal"
+        },
+        {
             "name": "Blocking",
             "type": "debugpy",
             "request": "launch",
             "module": "technitium_rac.cli",
             "justMyCode": false,
-            "args": ["blocking"]
+            "args": [
+                "blocking"
+            ]
         }
     ]
 }

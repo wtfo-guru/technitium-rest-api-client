@@ -1,3 +1,4 @@
+# name: technitium
 services:
   dns-server:
     container_name: dns-server
