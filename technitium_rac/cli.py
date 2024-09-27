@@ -12,6 +12,7 @@ from api_client.request import RestRequest
 from loguru import logger
 
 from technitium_rac.configurator import app_config
+from technitium_rac.constants import USER_AGENT
 from technitium_rac.foos import reconcile_servers
 
 CONTEXT_SETTINGS = types.MappingProxyType({"help_option_names": ["-h", "--help"]})

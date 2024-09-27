@@ -2,7 +2,8 @@
 
 import httpx
 import pytest
-import requests
+
+# import requests
 
 # def is_responsive(url) -> bool:
 #     """Test response from http server."""
@@ -31,8 +32,17 @@ import requests
 
 @pytest.fixture(scope="session")
 def token() -> str:
-    response = httpx.get("http://127.0.0.1:5380/api/user/login?user=admin&pass=testing")
+    """Get a token from testing server.
+
+    :return: server token
+    :rtype: str
+    """
+    response = httpx.get(
+        "http://127.0.0.1:5380/api/user/login?user=admin&pass=testing",
+        timeout=3,
+    )
     r_dict = response.json()
     if r_dict.get("status", "") == "ok":
         return r_dict.get("token", "")
+
     return ""
